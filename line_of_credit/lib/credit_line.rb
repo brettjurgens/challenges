@@ -25,7 +25,9 @@ class CreditLine
     if month < 0 || !@ledger.key?(month)
       0
     else
-      @ledger[month].interest
+      interest = 0
+      (0..month).each { |m| interest += @ledger[m].interest if @ledger.key?(m) }
+      interest
     end
   end
 
@@ -48,10 +50,12 @@ class CreditLine
 
     amount *= multiplier
 
+    day_month = day % 30
+
     if can_borrow month, amount
       @ledger[month] = LedgerEntry.new unless @ledger.key?(month)
-      interest_delta = amount * @apr * (@cycle - day + 1) / 365
-      @ledger[month].update amount, day, interest_delta
+      interest_delta = amount * @apr * (@cycle - day_month + 1) / 365
+      @ledger[month].update amount, day_month, interest_delta
     else
       fail ArgumentError, 'Over credit limit'
     end
