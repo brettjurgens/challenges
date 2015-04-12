@@ -48,5 +48,25 @@ describe CreditLine do
       transactions.last.amount.must_equal(-200)
       transactions.last.day.must_equal 15
     end
+
+    it 'should work when transactions are only in a later month' do
+      @creditline.borrow 500, 31
+      @creditline.pay 200, 45
+      @creditline.borrow 100, 55
+
+      @creditline.compute_interest(60).round(2).must_equal 11.89
+    end
+
+    it 'should keep track of multiple months of interest' do
+      @creditline.borrow 500, 1
+      @creditline.pay 200, 15
+      @creditline.borrow 100, 25
+
+      @creditline.borrow 500, 31
+      @creditline.pay 200, 45
+      @creditline.borrow 100, 55
+
+      @creditline.compute_interest(60).round(2).must_equal 23.78
+    end
   end
 end
