@@ -1,0 +1,10 @@
+# I disabled some of these because they are 
+# a bit too stringent.
+Metrics/AbcSize:
+  Max: 20
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/Next:
+  Enabled: false
