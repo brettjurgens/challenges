@@ -57,13 +57,21 @@ class CreditLine
       interest_delta = amount * @apr * (@cycle - day_month + 1) / 365
       @ledger[month].update amount, day_month, interest_delta
     else
-      fail ArgumentError, 'Over credit limit'
+      if multiplier == 1
+        fail ArgumentError, 'Over credit limit'
+      else
+        fail ArgumentError, "You can't pay more than you borrowed"
+      end
     end
   end
 
   # Checks if a user can actually borrow the money they're asking for
   def can_borrow(month, amount)
-    amount <= @limit ||
-      (@ledger.key?(month) && @ledger[month].borrowed + amount <= @limit)
+    valid = amount.abs <= @limit
+
+    valid &= (@ledger[month].borrowed + amount)
+             .between?(0, @limit) if @ledger.key? month
+
+    valid
   end
 end

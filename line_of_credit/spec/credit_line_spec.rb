@@ -29,6 +29,15 @@ describe CreditLine do
       end
     end
 
+    it 'should not let you overpay' do
+      begin
+        @creditline.pay 10_000, 1
+        flunk
+      rescue ArgumentError
+        pass
+      end
+    end
+
     it 'should let you borrow and pay' do
       @creditline.borrow 500, 1
       @creditline.pay 200, 15
